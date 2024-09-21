@@ -70,10 +70,10 @@ function App() {
         source={require("@/assets/images/shuffles.png")}
         resizeMode="contain"
         style={{ width: 350, height: 350 }}
-        alt="Shuffles"
+        alt="Magic Wallet"
       />
       <Text fontSize="$9" marginTop="$6" color="#000" fontWeight="semibold">
-        Welcome to Shuffles
+        Welcome to Magic Wallet
       </Text>
       <Text fontSize="$5" marginTop="$2" textAlign="center" color="#9AA0A6">
         A chain-abstracted magic spender on Mobile
@@ -93,7 +93,7 @@ function App() {
         textAlign="center"
         color="#9AA0A6"
       >
-        by using Shuffles, you agree to accept our{" "}
+        by using Magic Wallet, you agree to accept our{" "}
         <Text fontWeight="semibold">Terms of Use</Text> and{" "}
         <Text fontWeight="semibold">Privacy Policy</Text>
       </Text>
