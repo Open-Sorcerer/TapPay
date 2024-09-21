@@ -75,7 +75,7 @@ async function apiRequest<T>(
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.ONE_INCH_API_KEY}`,
+        Authorization: `Bearer ${process.env.EXPO_PUBLIC_ONE_INCH_API_KEY}`,
       },
       ...(method === "GET" ? { params } : {}),
       ...(method === "POST" && body ? { body: JSON.stringify(body) } : {}),
@@ -149,5 +149,41 @@ export async function buildTransaction(
     }
   } catch (error) {
     console.error("Error building transaction:", error);
+  }
+}
+
+export async function quote(
+  srcToken: string,
+  dstToken: string,
+  amount: number,
+  address: string
+) {
+  const url = "https://api.1inch.dev/swap/v6.0/1/swap";
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${process.env.EXPO_PUBLIC_ONE_INCH_API_KEY}`,
+    },
+    params: {
+      src: srcToken,
+      dst: dstToken,
+      amount: amount.toString(),
+      from: address,
+      origin: address,
+      slippage: "1",
+    },
+    paramsSerializer: {
+      indexes: null,
+    },
+  };
+
+  try {
+    const response = await fetch(url, config);
+    const quoteResponse: QuoteResponse | any = response.body;
+
+    console.log("Destination Amount:", quoteResponse.dstAmount);
+    console.log("Transaction Data:", quoteResponse.tx);
+  } catch (error) {
+    console.error(error);
   }
 }

@@ -15,7 +15,7 @@ function WalletScreen() {
         </Text>
         9500.27
       </Text>
-      <View className="w-60 flex flex-row items-center pt-10 gap-2">
+      <View className="w-6 flex flex-row items-center pt-10 gap-2">
         <Button className="w-full bg-black rounded-xl">
           <Text className="color-white fw-600 fos-20">Send</Text>
         </Button>
