@@ -6,6 +6,8 @@ import { createNewWallet } from "@/helpers/wallet";
 import { Button, Text, YStack } from "tamagui";
 import { useRouter } from "expo-router";
 import { fetchPortfolioDetails } from "@/helpers/1inch";
+import CenteredDivider from "@/components/Separator";
+import { Nfc } from "@tamagui/lucide-icons";
 
 // Pre-step, call this before any NFC operations
 NfcManager.start();
@@ -70,7 +72,7 @@ function App() {
       <Image
         source={require("@/assets/images/magic.png")}
         resizeMode="contain"
-        style={{ width: 350, height: 350 }}
+        style={{ width: 350, height: 350, marginTop: 15 }}
         alt="Magic Wallet"
       />
       <Text fontSize="$9" marginTop="$6" color="#000" fontWeight="semibold">
@@ -87,13 +89,16 @@ function App() {
       >
         Create Wallet
       </Button>
-      <Text
-        fontSize="$5"
-        marginTop="$6"
-        marginEnd="$2"
-        textAlign="center"
-        color="#9AA0A6"
+      <CenteredDivider text="OR" />
+      <Button
+        onPress={async () => {
+          router.push("/receive");
+        }}
+        style={styles.outlineButton}
       >
+        Receive funds via NFC
+      </Button>
+      <Text fontSize="$5" marginTop="$6" textAlign="center" color="#9AA0A6">
         by using Magic Wallet, you agree to accept our{" "}
         <Text fontWeight="semibold">Terms of Use</Text> and{" "}
         <Text fontWeight="semibold">Privacy Policy</Text>
@@ -125,6 +130,19 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontWeight: "semibold",
     color: "#fff",
+    fontSize: 18,
+    width: "80%",
+  },
+  outlineButton: {
+    marginTop: 3,
+    backgroundColor: "transparent",
+    borderRadius: 32,
+    borderColor: "#8357FF",
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    fontWeight: "semibold",
+    color: "#8357FF",
     fontSize: 18,
     width: "80%",
   },

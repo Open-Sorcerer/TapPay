@@ -148,15 +148,16 @@ function WalletScreen() {
               <Button
                 className="bg-black rounded-xl text-white"
                 onPress={() => {
-                  setIsOpen(true);
+                  // setIsOpen(true);
+                  router.push("/receive");
                 }}
               >
                 Receive Payment
               </Button>
-              <CustomBottomSheet
+              {/* <CustomBottomSheet
                 visible={isOpen}
                 onClose={() => setIsOpen(false)}
-              />
+              /> */}
             </View>
           </View>
           <TokenList portfolio={portfolio} />
