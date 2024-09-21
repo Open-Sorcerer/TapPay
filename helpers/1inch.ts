@@ -1,5 +1,3 @@
-import { ONE_INCH_API_KEY } from "@/secrets";
-
 type TokenAction = {
   chainId: string;
   address: string;
@@ -73,10 +71,61 @@ type PriceResponse = {
   [key: string]: string;
 };
 
+type TokenDetails = {
+  symbol: string;
+  name: string;
+  address: string;
+  chainId: number;
+  decimals: number;
+  logoURI: string;
+  isFoT: boolean;
+  rating: number;
+  tags: [
+    {
+      value: string;
+      provider: string;
+    },
+    {
+      value: string;
+      provider: string;
+    },
+    {
+      value: string;
+      provider: string;
+    }
+  ];
+  providers: string[];
+};
+
+type PortfolioToken = {
+  symbol: string;
+  name: string;
+  address: string;
+  chainId: number;
+  decimals: number;
+  logoURI: string;
+  amount: string;
+  price_to_usd: string;
+  value_usd: string;
+  status: string;
+};
+type portfolio = {
+  symbol: string;
+  name: string;
+  address: string;
+  chainId: number;
+  decimals: number;
+  logoURI: string;
+  amount: number;
+  price_to_usd: number;
+  value_usd: number;
+  status: number;
+};
+type userPortfolio = portfolio[];
 const BASE_URL = "https://api.1inch.dev";
 
 const headers = {
-  Authorization: `Bearer ${ONE_INCH_API_KEY}`,
+  Authorization: `Bearer rWtOI0gGIJmXd4P58f2pZg4oXqq3xirw`,
 };
 
 export const config: RequestInit = {
@@ -103,9 +152,9 @@ async function walletHistory(address: string, chainId: number): Promise<void> {
 async function fetchPortfolioDetails(
   address: string,
   chainId: number
-): Promise<PortfolioResponse | null> {
+): Promise<userPortfolio | null> {
   const url = `${BASE_URL}/portfolio/portfolio/v4/overview/erc20/details?addresses=${address}&chain_id=${chainId}`;
-
+  let userPortfolio: userPortfolio = [];
   try {
     const response = await fetch(url, config);
 
@@ -114,8 +163,44 @@ async function fetchPortfolioDetails(
     }
 
     const data: PortfolioResponse = await response.json();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return data;
+    try {
+      for (let index = 0; index < data.result.length; index++) {
+        const token = await fetch(
+          `https://api.1inch.dev/token/v1.2/1/custom/${data.result[index].contract_address}`,
+          {
+            headers: {
+              Authorization: "Bearer rWtOI0gGIJmXd4P58f2pZg4oXqq3xirw",
+            },
+          }
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        try {
+          const tokenData: TokenDetails = await token.json();
+          userPortfolio.push({
+            symbol: tokenData.symbol,
+            name: tokenData.name,
+            address: tokenData.address,
+            chainId: tokenData.chainId,
+            decimals: tokenData.decimals,
+            logoURI: tokenData.logoURI,
+            amount: data.result[index].amount,
+            price_to_usd: data.result[index].price_to_usd,
+            value_usd: data.result[index].value_usd,
+            status: data.result[index].status,
+          });
+        } catch (error) {
+          console.error(
+            "Error fetching token details:",
+            error,
+            data.result[index].contract_address
+          );
+        }
+      }
+    } catch (error) {}
+
+    return userPortfolio;
   } catch (error) {
     console.error("Error fetching portfolio details:", error);
     return null;
