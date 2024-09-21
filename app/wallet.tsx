@@ -5,6 +5,7 @@ import { fetchPortfolioDetails } from "@/helpers/1inch";
 import { getSigner, sendTransactionFromKey } from "@/helpers/wallet";
 import { Button, Input, Text, View, XStack, YStack } from "tamagui";
 import { Modal, StyleSheet, TouchableOpacity } from "react-native";
+import TokenList from "@/components/TokenList";
 
 const CustomBottomSheet = ({
   visible,
@@ -85,7 +86,7 @@ function WalletScreen() {
     <>
       <YStack flex={1} padding="$4" className="bg-white">
         <XStack justifyContent="space-between" width="100%" marginBottom="$4">
-          <Text fontSize="$6" fontWeight="bold">
+          <Text fontSize="$7" fontWeight="bold">
             My Wallet
           </Text>
         </XStack>
@@ -111,6 +112,7 @@ function WalletScreen() {
             />
           </View>
         </View>
+        <TokenList />
       </YStack>
     </>
   );

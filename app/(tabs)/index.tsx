@@ -67,7 +67,7 @@ function App() {
   return (
     <YStack flex={1} alignItems='center' justifyContent='center' padding='$4'>
       <Image
-        source={require("@/assets/images/shuffles.png")}
+        source={require("@/assets/images/magic.png")}
         resizeMode='contain'
         style={{ width: 350, height: 350 }}
         alt='Magic Wallet'
