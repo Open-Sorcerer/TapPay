@@ -1,6 +1,6 @@
 // TODO: Implement Activity Tab
 import { StyleSheet } from "react-native";
-import { Image, Text, View, XStack, YStack } from "tamagui";
+import { Image, ScrollView, Text, View, XStack, YStack } from "tamagui";
 
 const tokens = [
   {
@@ -29,7 +29,7 @@ function Activity() {
       <Text fontSize="$6" fontWeight="bold">
         Activity
       </Text>
-      <View style={styles.tokenList}>
+      <ScrollView style={styles.tokenList}>
         {tokens.map((token, index) => (
           <View style={styles.tokenItem} key={index}>
             <XStack alignItems="center" gap="$3">
@@ -75,7 +75,7 @@ function Activity() {
             </Text>
           </View>
         ))}
-      </View>
+      </ScrollView>
     </YStack>
   );
 }
@@ -84,9 +84,6 @@ export default Activity;
 
 const styles = StyleSheet.create({
   tokenList: {
-    flex: 1,
-    flexDirection: "column",
-    flexWrap: "wrap",
     marginTop: 10,
     width: "100%",
   },
