@@ -3,25 +3,25 @@ import { Button, Text, View, XStack, YStack } from "tamagui";
 
 function WalletScreen() {
   return (
-    <YStack flex={1} marginTop="$4" padding="$6">
-      <XStack justifyContent="space-between" width="100%" marginBottom="$4">
-        <Text fontSize="$6" fontWeight="bold">
+    <YStack flex={1} marginTop='$4' padding='$2'>
+      <XStack justifyContent='space-between' width='100%' marginBottom='$4'>
+        <Text fontSize='$6' fontWeight='bold'>
           My Wallet
         </Text>
       </XStack>
-      <Text fontSize="$12" fontWeight="bold">
-        <Text color="#a3a3a3" fontWeight="semibold">
+      <Text fontSize='$12' fontWeight='bold'>
+        <Text color='#a3a3a3' fontWeight='semibold'>
           $
         </Text>
         9500.27
       </Text>
-      <View className="w-6 flex flex-row items-center pt-10 gap-2">
-        <Button className="w-full bg-black rounded-xl">
-          <Text className="color-white fw-600 fos-20">Send</Text>
-        </Button>
-        <Button className="w-full bg-black rounded-xl">
-          <Text className="color-white fw-600 fos-20">Receive</Text>
-        </Button>
+      <View className='w-full flex flex-row items-center pt-10'>
+        <View className='w-1/2 pr-1'>
+          <Button className='bg-black rounded-xl text-white'>Send</Button>
+        </View>
+        <View className='w-1/2 pl-1'>
+          <Button className='bg-black rounded-xl text-white'>Receive</Button>
+        </View>
       </View>
     </YStack>
   );
