@@ -77,7 +77,7 @@ const headers = {
   Authorization: `Bearer ${process.env.ONE_INCH_API_KEY}`,
 };
 
-const config: RequestInit = {
+export const config: RequestInit = {
   headers,
 };
 
