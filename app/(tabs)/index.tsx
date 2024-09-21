@@ -69,7 +69,7 @@ function App() {
     <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
       <Image
         source={require("@/assets/images/magic.png")}
-        resizeMode='contain'
+        resizeMode="contain"
         style={{ width: 350, height: 350 }}
         alt="Magic Wallet"
       />
@@ -81,12 +81,7 @@ function App() {
       </Text>
       <Button
         onPress={async () => {
-          const user = await fetchPortfolioDetails(
-            "0x75c3C41f7D6504bB843a2b5eBbC62603901D2052",
-            1
-          );
-          console.log(user![0].address);
-          // router.push("/wallet");
+          router.push("/wallet");
         }}
         style={styles.button}
       >

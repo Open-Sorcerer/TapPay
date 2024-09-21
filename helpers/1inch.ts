@@ -121,7 +121,7 @@ type portfolio = {
   value_usd: number;
   status: number;
 };
-type userPortfolio = portfolio[];
+export type userPortfolio = portfolio[];
 const BASE_URL = "https://api.1inch.dev";
 
 const headers = {
@@ -168,7 +168,7 @@ async function fetchPortfolioDetails(
     try {
       for (let index = 0; index < data.result.length; index++) {
         const token = await fetch(
-          `https://api.1inch.dev/token/v1.2/1/custom/${data.result[index].contract_address}`,
+          `https://api.1inch.dev/token/v1.2/${chainId}/custom/${data.result[index].contract_address}`,
           {
             headers: {
               Authorization: "Bearer rWtOI0gGIJmXd4P58f2pZg4oXqq3xirw",

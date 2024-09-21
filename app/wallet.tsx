@@ -1,11 +1,12 @@
 // TODO: Implement wallet screen
 
 import { useState } from "react";
-import { fetchPortfolioDetails } from "@/helpers/1inch";
+import { fetchPortfolioDetails, userPortfolio } from "@/helpers/1inch";
 import { getSigner, sendTransactionFromKey } from "@/helpers/wallet";
 import { Button, Input, Text, View, XStack, YStack } from "tamagui";
 import { Modal, StyleSheet, TouchableOpacity } from "react-native";
 import TokenList from "@/components/TokenList";
+import { useQuery } from "@tanstack/react-query";
 
 const CustomBottomSheet = ({
   visible,
@@ -15,6 +16,7 @@ const CustomBottomSheet = ({
   onClose: () => void;
 }) => {
   const [amount, setAmount] = useState("");
+
   return (
     <Modal
       transparent={true}
@@ -79,6 +81,28 @@ const CustomBottomSheet = ({
 };
 
 function WalletScreen() {
+  const [portfolio, setPortfolio] = useState<userPortfolio | null>([]);
+  const [totalValue, setTotalValue] = useState(0);
+  const { isLoading, refetch, error } = useQuery({
+    queryKey: ["activities"],
+    queryFn: async ({ queryKey }) => {
+      const ethData = await fetchPortfolioDetails(
+        "0x75c3C41f7D6504bB843a2b5eBbC62603901D2052",
+        1
+      );
+      const polygonData = await fetchPortfolioDetails(
+        "0x75c3C41f7D6504bB843a2b5eBbC62603901D2052",
+        137
+      );
+
+      const allData = [...(ethData || []), ...(polygonData || [])];
+      console.log(allData);
+      const total = allData.reduce((acc, token) => acc + token.value_usd, 0);
+      setTotalValue(total);
+      setPortfolio(allData);
+      return allData;
+    },
+  });
   const encrypted =
     "a5ca001ff7b689d376e726768ed64127:487f70f2a6e1aa10f2e230af92dcb6f8abde428a66a1cd892ce69d56fa3e34e9e6aea5a8b319aa8263b4de29632b6b4b63d2e0b12aebc9c44c80dceaf50686ca9dbeeb881d0d92e2029aae20e76bfc95";
   const [isOpen, setIsOpen] = useState(false);
@@ -94,7 +118,7 @@ function WalletScreen() {
           <Text color="#a3a3a3" fontWeight="semibold">
             $
           </Text>
-          9500.27
+          {totalValue.toFixed(2)}
         </Text>
         <View className="w-full flex flex-row items-center pt-8">
           <View className="w-1/2 pr-1">
@@ -112,7 +136,7 @@ function WalletScreen() {
             />
           </View>
         </View>
-        <TokenList />
+        <TokenList portfolio={portfolio} />
       </YStack>
     </>
   );

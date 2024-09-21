@@ -1,3 +1,4 @@
+import { userPortfolio } from "@/helpers/1inch";
 import { StyleSheet } from "react-native";
 import { Image, Text, View, XStack, YStack } from "tamagui";
 
@@ -25,17 +26,19 @@ const tokens = [
   },
 ];
 
-function TokenList() {
+function TokenList({ portfolio }: { portfolio: userPortfolio | null }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Assets</Text>
       <View style={styles.tokenList}>
-        {tokens.map((token, index) => (
+        {portfolio?.map((token, index) => (
           <View style={styles.tokenItem} key={index}>
             <XStack alignItems="center" gap="$3">
               <View style={styles.imageContainer}>
                 <Image
-                  source={token.image}
+                  source={{
+                    uri: token.logoURI,
+                  }}
                   style={{
                     width: 40,
                     height: 40,
@@ -44,7 +47,14 @@ function TokenList() {
                   alt="Magic Wallet"
                 />
                 <Image
-                  source={token.image}
+                  source={{
+                    uri:
+                      token.chainId === 1
+                        ? "https://cryptologos.cc/logos/ethereum-eth-logo.png"
+                        : token.chainId === 137
+                        ? "https://w7.pngwing.com/pngs/48/858/png-transparent-polygon-crypto-polygon-logo-polygon-coin-polygon-sign-polygon-symbol-polygon-3d-icon.png"
+                        : "https://avatars.githubusercontent.com/u/108554348?v=4",
+                  }}
                   style={{
                     width: 20,
                     height: 20,
@@ -61,12 +71,12 @@ function TokenList() {
                   {token.name}
                 </Text>
                 <Text fontSize="$3" color="#737373">
-                  {token.balance} {token.symbol}
+                  {token.amount} {token.symbol}
                 </Text>
               </YStack>
             </XStack>
             <Text fontSize="$5" fontWeight="800">
-              ${token.price}
+              ${token.value_usd.toFixed(2)}
             </Text>
           </View>
         ))}
