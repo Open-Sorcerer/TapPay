@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { fetchPortfolioDetails, userPortfolio } from "@/helpers/1inch";
 import { getSigner, sendTransactionFromKey } from "@/helpers/wallet";
-import { Button, Input, Text, View, XStack, YStack } from "tamagui";
+import { Button, Input, Spinner, Text, View, XStack, YStack } from "tamagui";
 import { Modal, StyleSheet, TouchableOpacity } from "react-native";
 import TokenList from "@/components/TokenList";
 import { useQuery } from "@tanstack/react-query";
@@ -108,36 +108,42 @@ function WalletScreen() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <YStack flex={1} padding="$4" className="bg-white">
-        <XStack justifyContent="space-between" width="100%" marginBottom="$4">
-          <Text fontSize="$7" fontWeight="bold">
-            My Wallet
-          </Text>
-        </XStack>
-        <Text fontSize="$12" fontWeight="bold">
-          <Text color="#a3a3a3" fontWeight="semibold">
-            $
-          </Text>
-          {totalValue.toFixed(2)}
-        </Text>
-        <View className="w-full flex flex-row items-center pt-8">
-          <View className="w-1/2 pr-1">
-            <Button
-              className="bg-black rounded-xl text-white"
-              onPress={() => {
-                setIsOpen(true);
-              }}
-            >
-              Receive Payment
-            </Button>
-            <CustomBottomSheet
-              visible={isOpen}
-              onClose={() => setIsOpen(false)}
-            />
-          </View>
+      {isLoading ? (
+        <View className="flex items-center justify-center h-full">
+          <Spinner size="large" color="$violet10" />
         </View>
-        <TokenList portfolio={portfolio} />
-      </YStack>
+      ) : (
+        <YStack flex={1} padding="$4" className="bg-white">
+          <XStack justifyContent="space-between" width="100%" marginBottom="$4">
+            <Text fontSize="$7" fontWeight="bold">
+              My Wallet
+            </Text>
+          </XStack>
+          <Text fontSize="$12" fontWeight="bold">
+            <Text color="#a3a3a3" fontWeight="semibold">
+              $
+            </Text>
+            {totalValue.toFixed(2)}
+          </Text>
+          <View className="w-full flex flex-row items-center pt-8">
+            <View className="w-1/2 pr-1">
+              <Button
+                className="bg-black rounded-xl text-white"
+                onPress={() => {
+                  setIsOpen(true);
+                }}
+              >
+                Receive Payment
+              </Button>
+              <CustomBottomSheet
+                visible={isOpen}
+                onClose={() => setIsOpen(false)}
+              />
+            </View>
+          </View>
+          <TokenList portfolio={portfolio} />
+        </YStack>
+      )}
     </>
   );
 }

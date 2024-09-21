@@ -1,36 +1,12 @@
 import { userPortfolio } from "@/helpers/1inch";
 import { StyleSheet } from "react-native";
-import { Image, Text, View, XStack, YStack } from "tamagui";
-
-const tokens = [
-  {
-    name: "Solana",
-    symbol: "SOL",
-    balance: 23,
-    price: 2497.69,
-    image: require("@/assets/images/solana.png"),
-  },
-  {
-    name: "Ethereum",
-    symbol: "ETH",
-    balance: 1.2,
-    price: 2487.69,
-    image: require("@/assets/images/eth.png"),
-  },
-  {
-    name: "DEGEN",
-    symbol: "DEGEN",
-    balance: 12981,
-    price: 2413.69,
-    image: require("@/assets/images/base.png"),
-  },
-];
+import { Image, ScrollView, Text, View, XStack, YStack } from "tamagui";
 
 function TokenList({ portfolio }: { portfolio: userPortfolio | null }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Assets</Text>
-      <View style={styles.tokenList}>
+      <ScrollView style={styles.tokenList}>
         {portfolio?.map((token, index) => (
           <View style={styles.tokenItem} key={index}>
             <XStack alignItems="center" gap="$3">
@@ -62,6 +38,7 @@ function TokenList({ portfolio }: { portfolio: userPortfolio | null }) {
                     position: "absolute",
                     bottom: -5,
                     right: -5,
+                    backgroundColor: "#fff",
                   }}
                   alt="Magic Wallet"
                 />
@@ -76,11 +53,11 @@ function TokenList({ portfolio }: { portfolio: userPortfolio | null }) {
               </YStack>
             </XStack>
             <Text fontSize="$5" fontWeight="800">
-              ${token.value_usd.toFixed(2)}
+              ${token.value_usd?.toFixed(2)}
             </Text>
           </View>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -97,9 +74,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tokenList: {
-    flex: 1,
-    flexDirection: "column",
-    flexWrap: "wrap",
     marginTop: 10,
   },
   tokenItem: {
