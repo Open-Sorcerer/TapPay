@@ -80,7 +80,8 @@ function App() {
       </Text>
       <Button
         onPress={() => {
-          router.push("/wallet");
+          // router.push("/wallet");
+          writeNdef();
         }}
         style={styles.button}
       >

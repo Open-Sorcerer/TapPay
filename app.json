@@ -23,7 +23,8 @@
       },
       "permissions": [
         "android.permission.NFC"
-      ]
+      ],
+      "package": "com.vraj.nfcWallet"
     },
     "web": {
       "bundler": "metro",
