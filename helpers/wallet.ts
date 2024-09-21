@@ -2,7 +2,7 @@ import { createWalletClient, http, parseEther } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains";
 
-const sendTransactionFromKey = async (key: `0x${string}`, password: string) => {
+const sendTransactionFromKey = async (key: string, password: string) => {
   const privateKey = await decryptKey(password, key);
 
   const account = privateKeyToAccount(privateKey as `0x${string}`);
@@ -13,12 +13,22 @@ const sendTransactionFromKey = async (key: `0x${string}`, password: string) => {
     transport: http(),
   });
 
+  console.log(account.address);
+
   const hash = await client.sendTransaction({
     to: "0x3039e4a4a540F35ae03A09f3D5A122c49566f919",
     value: parseEther("0.0001"),
   });
 
+  console.log(hash);
+
   return hash;
+};
+
+const getSigner = async (key: string, password: string) => {
+  const privateKey = await decryptKey(password, key);
+  const account = privateKeyToAccount(privateKey as `0x${string}`);
+  return account;
 };
 
 const createNewWallet = async (password: string) => {
@@ -65,4 +75,4 @@ const encryptKey = async (password: string, privateKey: string) => {
 
   return encrypted;
 };
-export { sendTransactionFromKey, createNewWallet };
+export { sendTransactionFromKey, createNewWallet, getSigner };

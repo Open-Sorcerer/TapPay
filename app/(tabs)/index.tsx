@@ -38,7 +38,7 @@ function App() {
   }
 
   async function writeNdef(): Promise<boolean> {
-    console.log("Writing wallet code to NFC");
+    console.log("Creating wallet...");
     let result = false;
 
     try {
@@ -47,7 +47,7 @@ function App() {
       const walletCode = await createNewWallet("password");
       console.log("Wallet code:", walletCode);
       const bytes = Ndef.encodeMessage([
-        Ndef.textRecord(walletCode.encryptedKey),
+        Ndef.textRecord(JSON.stringify({ key: walletCode })),
       ]);
 
       if (bytes) {
@@ -65,17 +65,17 @@ function App() {
   }
 
   return (
-    <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
+    <YStack flex={1} alignItems='center' justifyContent='center' padding='$4'>
       <Image
         source={require("@/assets/images/shuffles.png")}
-        resizeMode="contain"
+        resizeMode='contain'
         style={{ width: 350, height: 350 }}
-        alt="Magic Wallet"
+        alt='Magic Wallet'
       />
-      <Text fontSize="$9" marginTop="$6" color="#000" fontWeight="semibold">
+      <Text fontSize='$9' marginTop='$6' color='#000' fontWeight='semibold'>
         Welcome to Magic Wallet
       </Text>
-      <Text fontSize="$5" marginTop="$2" textAlign="center" color="#9AA0A6">
+      <Text fontSize='$5' marginTop='$2' textAlign='center' color='#9AA0A6'>
         A chain-abstracted magic spender on Mobile
       </Text>
       <Button
@@ -87,15 +87,15 @@ function App() {
         Create Wallet
       </Button>
       <Text
-        fontSize="$5"
-        marginTop="$6"
-        marginEnd="$2"
-        textAlign="center"
-        color="#9AA0A6"
+        fontSize='$5'
+        marginTop='$6'
+        marginEnd='$2'
+        textAlign='center'
+        color='#9AA0A6'
       >
         by using Magic Wallet, you agree to accept our{" "}
-        <Text fontWeight="semibold">Terms of Use</Text> and{" "}
-        <Text fontWeight="semibold">Privacy Policy</Text>
+        <Text fontWeight='semibold'>Terms of Use</Text> and{" "}
+        <Text fontWeight='semibold'>Privacy Policy</Text>
       </Text>
     </YStack>
   );

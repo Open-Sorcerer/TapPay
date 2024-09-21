@@ -1,3 +1,5 @@
+import { ONE_INCH_API_KEY } from "@/secrets";
+
 type TokenAction = {
   chainId: string;
   address: string;
@@ -74,7 +76,7 @@ type PriceResponse = {
 const BASE_URL = "https://api.1inch.dev";
 
 const headers = {
-  Authorization: `Bearer ${process.env.ONE_INCH_API_KEY}`,
+  Authorization: `Bearer ${ONE_INCH_API_KEY}`,
 };
 
 export const config: RequestInit = {
@@ -112,6 +114,7 @@ async function fetchPortfolioDetails(
     }
 
     const data: PortfolioResponse = await response.json();
+
     return data;
   } catch (error) {
     console.error("Error fetching portfolio details:", error);
@@ -139,3 +142,5 @@ async function fetchPriceData(
     return null;
   }
 }
+
+export { walletHistory, fetchPortfolioDetails, fetchPriceData };

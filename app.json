@@ -35,7 +35,7 @@
       [
         "react-native-nfc-manager",
         {
-          "nfcPermission": "Let me read your NFC tag",
+          "nfcPermission": "Create your Magic Wallet",
           "selectIdentifiers": [
             "A0000002471001"
           ],
