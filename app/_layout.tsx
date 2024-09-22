@@ -12,6 +12,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { createTamagui, TamaguiProvider } from "tamagui";
 import defaultConfig from "@tamagui/config/v3";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 const config = createTamagui(defaultConfig);
 
@@ -41,9 +42,10 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <TamaguiProvider config={config}>
           <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
+            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+            <Stack.Screen name='+not-found' />
           </Stack>
+          <Toast />
         </TamaguiProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -7,7 +7,6 @@ import { Button, Text, YStack } from "tamagui";
 import { useRouter } from "expo-router";
 import { fetchPortfolioDetails } from "@/helpers/1inch";
 import CenteredDivider from "@/components/Separator";
-import { Nfc } from "@tamagui/lucide-icons";
 
 // Pre-step, call this before any NFC operations
 NfcManager.start();
@@ -50,7 +49,7 @@ function App() {
       const walletCode = await createNewWallet("password");
       console.log("Wallet code:", walletCode);
       const bytes = Ndef.encodeMessage([
-        Ndef.textRecord(JSON.stringify({ key: walletCode })),
+        Ndef.textRecord(JSON.stringify({ key: walletCode.encryptedKey })),
       ]);
 
       if (bytes) {
@@ -68,28 +67,30 @@ function App() {
   }
 
   return (
-    <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
+    <YStack flex={1} alignItems='center' justifyContent='center' padding='$4'>
       <Image
         source={require("@/assets/images/magic.png")}
-        resizeMode="contain"
+        resizeMode='contain'
         style={{ width: 350, height: 350, marginTop: 15 }}
-        alt="Magic Wallet"
+        alt='Magic Wallet'
       />
-      <Text fontSize="$9" marginTop="$6" color="#000" fontWeight="semibold">
+      <Text fontSize='$9' marginTop='$6' color='#000' fontWeight='semibold'>
         Welcome to Magic Wallet
       </Text>
-      <Text fontSize="$5" marginTop="$2" textAlign="center" color="#9AA0A6">
+      <Text fontSize='$5' marginTop='$2' textAlign='center' color='#9AA0A6'>
         A chain-abstracted magic spender on Mobile
       </Text>
       <Button
         onPress={async () => {
+          // router.push("/wallet");
+          await writeNdef();
           router.push("/wallet");
         }}
         style={styles.button}
       >
         Create Wallet
       </Button>
-      <CenteredDivider text="OR" />
+      <CenteredDivider text='OR' />
       <Button
         onPress={async () => {
           router.push("/receive");
@@ -98,10 +99,10 @@ function App() {
       >
         Receive funds via NFC
       </Button>
-      <Text fontSize="$5" marginTop="$6" textAlign="center" color="#9AA0A6">
+      <Text fontSize='$5' marginTop='$6' textAlign='center' color='#9AA0A6'>
         by using Magic Wallet, you agree to accept our{" "}
-        <Text fontWeight="semibold">Terms of Use</Text> and{" "}
-        <Text fontWeight="semibold">Privacy Policy</Text>
+        <Text fontWeight='semibold'>Terms of Use</Text> and{" "}
+        <Text fontWeight='semibold'>Privacy Policy</Text>
       </Text>
     </YStack>
   );

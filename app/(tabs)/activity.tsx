@@ -5,34 +5,37 @@ import { Image, ScrollView, Text, View, XStack, YStack } from "tamagui";
 const tokens = [
   {
     intent: "Received",
-    balance: 5,
-    symbol: "SOL",
-    image: require("@/assets/images/solana.png"),
+    balance: 0.01,
+    symbol: "ETH",
+    image: require("@/assets/images/eth.png"),
+    chain: require("@/assets/images/eth.png"),
   },
   {
     intent: "Sent",
-    balance: 1.2,
-    symbol: "ETH",
-    image: require("@/assets/images/eth.png"),
+    balance: 20,
+    symbol: "USDC",
+    image: require("@/assets/images/usdc.png"),
+    chain: require("@/assets/images/base.png"),
   },
   {
     intent: "Received",
     balance: 12981,
     symbol: "DEGEN",
-    image: require("@/assets/images/base.png"),
+    image: require("@/assets/images/degen.png"),
+    chain: require("@/assets/images/base.png"),
   },
 ];
 
 function Activity() {
   return (
-    <YStack flex={1} alignItems="center" marginTop="$9" padding="$4">
-      <Text fontSize="$6" fontWeight="bold">
+    <YStack flex={1} alignItems='center' marginTop='$9' padding='$4'>
+      <Text fontSize='$6' fontWeight='bold'>
         Activity
       </Text>
       <ScrollView style={styles.tokenList}>
         {tokens.map((token, index) => (
           <View style={styles.tokenItem} key={index}>
-            <XStack alignItems="center" gap="$3">
+            <XStack alignItems='center' gap='$3'>
               <View style={styles.imageContainer}>
                 <Image
                   source={token.image}
@@ -41,10 +44,10 @@ function Activity() {
                     height: 40,
                     borderRadius: 100,
                   }}
-                  alt="Magic Wallet"
+                  alt='Magic Wallet'
                 />
                 <Image
-                  source={token.image}
+                  source={token.chain}
                   style={{
                     width: 16,
                     height: 16,
@@ -53,21 +56,21 @@ function Activity() {
                     bottom: -2,
                     right: -3,
                   }}
-                  alt="Magic Wallet"
+                  alt='Magic Wallet'
                 />
               </View>
-              <YStack gap="$1">
-                <Text fontSize="$3" color="#737373">
+              <YStack gap='$1'>
+                <Text fontSize='$3' color='#737373'>
                   {token.intent}
                 </Text>
-                <Text fontSize="$5" fontWeight="bold">
+                <Text fontSize='$5' fontWeight='bold'>
                   {token.symbol}
                 </Text>
               </YStack>
             </XStack>
             <Text
-              fontSize="$5"
-              fontWeight="bold"
+              fontSize='$5'
+              fontWeight='bold'
               color={token.intent === "Received" ? "#22c55e" : "#FF0000"}
             >
               {token.intent === "Received" ? "+" : "-"} {token.balance}{" "}

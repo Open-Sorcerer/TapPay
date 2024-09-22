@@ -1,43 +1,59 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
+import { MMKVLoader, useMMKVStorage } from "react-native-mmkv-storage";
+import Toast from "react-native-toast-message";
 import { Button, Input, Text, View, XStack, YStack } from "tamagui";
 
+const storage = new MMKVLoader().initialize();
 function Settings() {
-  const [token, setToken] = useState("");
-  const [chain, setChain] = useState("");
+  const [chain, setChain] = useMMKVStorage("chain", storage, "Avalanche Fuji");
+  const [token, setToken] = useMMKVStorage("token", storage, "BnM");
+  const router = useRouter();
+
   return (
     <View style={styles.modalContainer}>
-      <XStack justifyContent="space-between">
+      <XStack justifyContent='space-between'>
         <Text style={styles.text}>Transfer Preferences</Text>
       </XStack>
       <YStack>
-        <Text fontSize="$5" fontWeight="medium" marginBottom="$2">
+        <Text fontSize='$5' fontWeight='medium' marginBottom='$2'>
           Chain
         </Text>
         <Input
-          placeholder="Base"
-          keyboardType="default"
+          placeholder='Base'
+          keyboardType='default'
           value={chain}
           onChangeText={setChain}
         />
         <Text
-          fontSize="$5"
-          fontWeight="medium"
-          marginTop="$4"
-          marginBottom="$2"
+          fontSize='$5'
+          fontWeight='medium'
+          marginTop='$4'
+          marginBottom='$2'
         >
           Token
         </Text>
         <Input
-          placeholder="USDC"
-          keyboardType="default"
+          placeholder='USDC'
+          keyboardType='default'
           value={token}
           onChangeText={setToken}
         />
-        <Button style={styles.receiveButton}>
+        <Button
+          style={styles.receiveButton}
+          onPress={() => {
+            Toast.show({
+              type: "success",
+              text1: "Successfully saved preferences",
+              position: "bottom",
+              text1Style: {},
+            });
+          }}
+        >
           <Text style={styles.receiveButtonText}>Save</Text>
         </Button>
-        <Button style={styles.resetButton}>
+        <Button style={styles.resetButton} onPress={() => router.push("/")}>
           <Text style={styles.resetButtonText}>Reset Wallet</Text>
         </Button>
       </YStack>
@@ -55,7 +71,6 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     padding: 20,
-
   },
   text: {
     fontSize: 22,
