@@ -1,50 +1,34 @@
-# Welcome to your Expo app 👋
+# TapPay
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A chain-agnostic mobile payment app using NFC cards for secure, seamless cross-chain transactions. Pay with your favorite token on any chain, anywhere. Powered by Chainlink CCIP and LayerZero for ultimate flexibility and security.
 
-## Get started
+## Project Description
 
-1. Install dependencies
+TapPay paves a new way for digital payments by offering a truly chain-agnostic mobile experience. Our application leverages battle-tested protocols Chainlink CCIP and LayerZero to enable users to pay with their preferred tokens on any blockchain, regardless of the merchant's preferred token or chain.
 
-   ```bash
-   npm install
-   ```
+TapPay provides a unified payment interface for consumer crypto to pay for their daily bread and butter.
 
-2. Start the app
+[CCIP Contract](https://ccip.chain.link/address/0x21fea77b1026245f00d572d8fcc39ba8be0df2be)
+[Sign Protocol Attestation Script](https://testnet-scan.sign.global/schema/onchain_evm_10200_0x76)
 
-   ```bash
-    npx expo start
-   ```
+## Key Features:
 
-In the output, you'll find options to open the app in a
+Chain-Agnostic Payments: Users can pay with their favorite token on their preferred chain, while merchants can receive payment in their desired token on their chosen chain. NFC Card Integration: We've incorporated NFC cards for enhanced security and ease of use. The card stores an encrypted keyshare, working in tandem with the mobile app for a seamless tap-and-pay experience. Cross-Chain Compatibility: Utilizing Chainlink CCIP and LayerZero, our app handles complex cross-chain transactions behind the scenes, providing a smooth user experience. Merchant Flexibility: Merchants can specify their preferred token and chain for receiving payments, without limiting customer options. Enhanced Security: The combination of NFC card and mobile app keyshares provides an additional layer of security for transactions.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+TapPay bridges the gap between various blockchain ecosystems, making cryptocurrency payments as simple and universal as traditional payment methods. Whether you're buying coffee at a local shop or making a purchase halfway around the world, TapPay ensures that blockchain differences never hinder your transaction.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## How it's Made
 
-## Get a fresh project
+TapPay is built on multiple blockchain technologies and user-centric design principles:
 
-When you're ready, run:
+Mobile Application: Developed using React Native for cross-platform compatibility (iOS and Android). The app interfaces with various blockchain networks and manages user wallets and preferences. Smart Contracts: Written in Solidity, our contracts handle the core logic of cross-chain transactions. They're deployed on multiple chains to facilitate seamless interoperability. Cross-Chain Interoperability:
 
-```bash
-npm run reset-project
-```
+Chainlink CCIP (Cross-Chain Interoperability Protocol): Used for secure cross-chain messaging and token transfers. CCIP's reliability ensures that complex multi-chain transactions are executed accurately. LayerZero: Implemented for additional cross-chain capabilities, providing redundancy and expanded network coverage.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+NFC Integration: We've developed a custom protocol for secure communication between the NFC card and the mobile app. The NFC card stores an encrypted keyshare, which is combined with a keyshare in the app to complete transactions.
 
-## Learn more
+Security Measures: Multi-factor authentication combining biometrics, NFC card, and app-based verification. End-to-end encryption for all communications. Threshold cryptography for distributing transaction signing across the NFC card and mobile app.
 
-To learn more about developing your project with Expo, look at the following resources:
+Token Swap Integration: We've integrated with decentralized exchanges on various chains to facilitate token swaps when necessary for cross-chain transactions.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+One particularly innovative aspect is our "Chain Abstraction Layer." This custom-built middleware dynamically routes transactions through the most efficient cross-chain pathway, considering factors like gas fees, transaction speed, and network congestion. It seamlessly switches between Chainlink CCIP and LayerZero based on real-time conditions, ensuring optimal performance for each transaction.
