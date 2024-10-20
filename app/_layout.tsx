@@ -6,13 +6,14 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { createTamagui, TamaguiProvider } from "tamagui";
 import defaultConfig from "@tamagui/config/v3";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
+import CustomToast from "@/components/Customtoast";
 
 const config = createTamagui(defaultConfig);
 
@@ -42,10 +43,18 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <TamaguiProvider config={config}>
           <Stack>
-            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-            <Stack.Screen name='+not-found' />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
           </Stack>
-          <Toast />
+          <Toast
+            config={{
+              customToast: (internalProps) => (
+                <CustomToast
+                  {...{ ...internalProps, text1: internalProps.text1 ?? "" }}
+                />
+              ),
+            }}
+          />
         </TamaguiProvider>
       </ThemeProvider>
     </QueryClientProvider>

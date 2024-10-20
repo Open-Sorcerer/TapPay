@@ -1,11 +1,9 @@
-import "react-native-get-random-values"; // Add this import at the top of the file
+import "react-native-get-random-values";
 import { useState } from "react";
 import { StyleSheet, Image } from "react-native";
 import NfcManager, { Ndef, NfcTech } from "react-native-nfc-manager";
-import { createNewWallet } from "@/helpers/wallet";
 import { Button, Text, YStack } from "tamagui";
-import { useRouter } from "expo-router";
-import { fetchPortfolioDetails } from "@/helpers/1inch";
+import { createNewWallet, executeTransaction } from "@/helpers/wallet";
 import CenteredDivider from "@/components/Separator";
 
 // Pre-step, call this before any NFC operations
@@ -13,7 +11,6 @@ NfcManager.start();
 
 function App() {
   const [data, setData] = useState<string>("");
-  const router = useRouter();
 
   async function readNdef() {
     console.log("Scanning for NFC tags...");
@@ -29,8 +26,9 @@ function App() {
         msg = undefined;
       }
       const text = Ndef.text.decodePayload(msg!);
-      console.log("NFC Data:", text);
-      setData("NFC Data: " + text);
+      const parsedText = JSON.parse(text);
+      console.log("NFC Data:", parsedText.key);
+      setData(parsedText.key);
     } catch (ex) {
       console.log("Oops!", ex);
     } finally {
@@ -49,7 +47,11 @@ function App() {
       const walletCode = await createNewWallet("password");
       console.log("Wallet code:", walletCode);
       const bytes = Ndef.encodeMessage([
-        Ndef.textRecord(JSON.stringify({ key: walletCode.encryptedKey })),
+        Ndef.textRecord(
+          JSON.stringify({
+            key: walletCode?.encryptedKey,
+          })
+        ),
       ]);
 
       if (bytes) {
@@ -67,43 +69,44 @@ function App() {
   }
 
   return (
-    <YStack flex={1} alignItems='center' justifyContent='center' padding='$4'>
+    <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
       <Image
         source={require("@/assets/images/magic.png")}
-        resizeMode='contain'
+        resizeMode="contain"
         style={{ width: 350, height: 350, marginTop: 15 }}
-        alt='Magic Wallet'
+        alt="Magic Wallet"
       />
-      <Text fontSize='$9' marginTop='$6' color='#000' fontWeight='semibold'>
-        Welcome to Magic Wallet
+      <Text fontSize="$9" marginTop="$6" color="#000" fontWeight="semibold">
+        SOON Pay
       </Text>
-      <Text fontSize='$5' marginTop='$2' textAlign='center' color='#9AA0A6'>
-        A chain-abstracted magic spender on Mobile
-      </Text>
+
       <Button
         onPress={async () => {
-          // router.push("/wallet");
+          console.log("Creating wallet...");
+          const walletCode = await createNewWallet("password");
+          console.log("Wallet code:", walletCode);
           await writeNdef();
-          router.push("/wallet");
         }}
         style={styles.button}
       >
         Create Wallet
       </Button>
-      <CenteredDivider text='OR' />
+      <CenteredDivider text="OR" />
       <Button
         onPress={async () => {
-          router.push("/receive");
+          await readNdef();
+          console.log("Reading NFC tag...", data);
+          executeTransaction(
+            data,
+            "password",
+            "FVP39NNZMKfEDzbg3BWWZEiYPH3wyFp5kmtuN3M2AZFo",
+            0.0001
+          );
         }}
         style={styles.outlineButton}
       >
         Receive funds via NFC
       </Button>
-      <Text fontSize='$5' marginTop='$6' textAlign='center' color='#9AA0A6'>
-        by using Magic Wallet, you agree to accept our{" "}
-        <Text fontWeight='semibold'>Terms of Use</Text> and{" "}
-        <Text fontWeight='semibold'>Privacy Policy</Text>
-      </Text>
     </YStack>
   );
 }

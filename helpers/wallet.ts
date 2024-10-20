@@ -1,84 +1,110 @@
-import { PRIVATE_KEY } from "@/secrets";
+import { Buffer } from "buffer"; // Import Buffer polyfill for environments without native Buffer support
 import {
-  createPublicClient,
-  createWalletClient,
-  getContract,
-  http,
-  parseEther,
-  parseUnits,
-} from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { baseSepolia } from "viem/chains";
-import { buildTransaction } from "./fusion";
-import {
-  ccipABI,
-  ccipBaseSepolia,
-  usdcBaseABI,
-  usdcBaseSepolia,
-  usdcProxyBaseSepolia,
-  usdcProxyBaseSepoliaABI,
-} from "./const";
-import { waitForTransactionReceipt } from "viem/_types/actions/public/waitForTransactionReceipt";
+  Connection,
+  Keypair,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+import * as Bip39 from "bip39";
+import Toast from "react-native-toast-message";
+import { Linking } from "react-native";
 
-const sendTransactionFromKey = async (key: string, password: string) => {
-  const privateKey = await decryptKey(password, key);
+// Solana network setup
+const SOLANA_RPC_URL = "https://rpc.devnet.soo.network/rpc";
+const connection = new Connection(SOLANA_RPC_URL);
+global.Buffer = global.Buffer || Buffer;
 
-  const account = privateKeyToAccount(privateKey as `0x${string}`);
+// Function to send a transaction on Solana
+const sendTransactionFromKey = async (
+  encryptedKey: string,
+  password: string
+) => {
+  // Decrypt the private key using the API
+  const privateKey = await decryptKey(password, encryptedKey);
 
-  const client = createWalletClient({
-    account,
-    chain: baseSepolia,
-    transport: http(),
-  });
+  // Create a Keypair from the decrypted private key
+  const keypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(privateKey)));
 
-  console.log(account.address);
+  console.log("Sender address:", keypair.publicKey.toBase58());
 
-  const hash = await client.sendTransaction({
-    to: "0x3039e4a4a540F35ae03A09f3D5A122c49566f919",
-    value: parseEther("0.0001"),
-  });
+  // Define the receiver address
+  const toAddress = new PublicKey(
+    "5VnRtyXfXPUF7jw5ZjNHuHgVv7KhAxgxbHgTpRzvuLr5"
+  ); // Replace with your destination address
 
-  console.log(hash);
+  // Create a transaction
+  const transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: keypair.publicKey,
+      toPubkey: toAddress,
+      lamports: LAMPORTS_PER_SOL * 0.0001, // Sending 0.0001 SOL
+    })
+  );
 
-  return hash;
+  // Send the transaction
+  const signature = await connection.sendTransaction(transaction, [keypair]);
+  console.log("Transaction signature:", signature);
+
+  // Wait for confirmation
+  await connection.confirmTransaction(signature);
+
+  return signature;
 };
 
-const getSigner = async (key: string, password: string) => {
-  const privateKey = await decryptKey(password, key);
-  const account = privateKeyToAccount(privateKey as `0x${string}`);
-  return account;
+// Function to get signer (keypair) from private key
+const getSigner = async (encryptedKey: string, password: string) => {
+  // Decrypt the private key using the API
+  const privateKey = await decryptKey(password, encryptedKey);
+  const keypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(privateKey)));
+  return keypair;
 };
 
 const createNewWallet = async (password: string) => {
-  // const privateKey = generatePrivateKey();
-  const privateKey = PRIVATE_KEY;
-  const account = privateKeyToAccount(privateKey);
-  const encryptedKey = await encryptKey(password, privateKey);
+  try {
+    console.log("Creating new wallet...");
 
-  return {
-    address: account.address,
-    encryptedKey: encryptedKey,
-  };
+    const mnemonic = Bip39.generateMnemonic();
+    const seed = Bip39.mnemonicToSeedSync(mnemonic, "").slice(0, 32);
+    const keypair = Keypair.fromSeed(seed);
+
+    console.log("New wallet address:", keypair.publicKey.toBase58());
+
+    if (!keypair) {
+      console.error("Failed to generate a keypair");
+      return;
+    }
+
+    // Convert the secretKey to a JSON stringified array for encryption
+    const privateKey = JSON.stringify(Array.from(keypair.secretKey));
+
+    const user = Keypair.fromSecretKey(new Uint8Array(JSON.parse(privateKey)));
+    console.log("User address:", user.publicKey.toBase58());
+    console.log("Private key (un-encrypted):", privateKey);
+    // Encrypt the private key using the API
+    const encryptedKey = await encryptKey(password, privateKey);
+
+    if (!encryptedKey) {
+      console.error("Failed to encrypt the private key");
+      return;
+    }
+
+    console.log("Encrypted private key:", encryptedKey);
+
+    // Return the new wallet address and the encrypted private key
+    return {
+      address: keypair.publicKey.toBase58(),
+      encryptedKey: encryptedKey,
+    };
+  } catch (error) {
+    console.error("Error in createNewWallet function:", error);
+  }
 };
 
-const decryptKey = async (password: string, encodedData: string) => {
-  const apiResponse = await fetch("https://nfc-encryption.vercel.app/decrypt", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      encryptedData: encodedData,
-      password,
-    }),
-  });
-
-  const { decrypted } = await apiResponse.json();
-
-  return decrypted;
-};
-
+// Function to encrypt a private key via an API
 const encryptKey = async (password: string, privateKey: string) => {
+  console.log("Encrypting private key...");
   const apiResponse = await fetch("https://nfc-encryption.vercel.app/encrypt", {
     method: "POST",
     headers: {
@@ -91,75 +117,69 @@ const encryptKey = async (password: string, privateKey: string) => {
   });
 
   const { encrypted } = await apiResponse.json();
-
+  console.log("Encrypted key:", encrypted);
   return encrypted;
 };
 
-const executeTransaction = async (
-  key: string,
-  password: string,
-  toAddress: string = "0x3039e4a4a540F35ae03A09f3D5A122c49566f919",
-  amount: number,
-  toToken?: string,
-  toChain?: number,
-  receiveChain?: number,
-  token?: string
-) => {
-  const privateKey = await decryptKey(password, key);
-
-  const account = privateKeyToAccount(privateKey as `0x${string}`);
-
-  const walletClient = createWalletClient({
-    account,
-    chain: baseSepolia,
-    transport: http(),
+// Function to decrypt a private key via an API
+const decryptKey = async (password: string, encryptedData: string) => {
+  const apiResponse = await fetch("https://nfc-encryption.vercel.app/decrypt", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      encryptedData: encryptedData,
+      password,
+    }),
   });
 
-  const publicClient = createPublicClient({
-    chain: baseSepolia,
-    transport: http(),
-  });
-
-  console.log("client", walletClient);
-
-  // get approval for usdc token on baseSepolia
-
-  const approveUSDC = getContract({
-    address: usdcProxyBaseSepolia,
-    abi: usdcProxyBaseSepoliaABI,
-    client: walletClient,
-  });
-
-  const hash = await approveUSDC.write.approve([
-    ccipBaseSepolia,
-    parseUnits(amount.toString(), 6),
-  ]);
-
-  console.log("approve", hash);
-
-  // wait for approval to be confirmed
-  await publicClient.waitForTransactionReceipt({
-    hash,
-  });
-
-  // execute the transaction
-  const executeTransaction = await walletClient.writeContract({
-    address: ccipBaseSepolia,
-    abi: ccipABI,
-    functionName: "sendMessagePayLINK",
-    args: [
-      "14767482510784806043",
-      toAddress,
-      "MagicSpend",
-      "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
-      parseUnits(amount.toString(), 6),
-    ],
-  });
-
-  console.log("execute", executeTransaction);
-
-  return executeTransaction;
+  const { decrypted } = await apiResponse.json();
+  return decrypted;
 };
+
+// Transaction execution function
+const executeTransaction = async (
+  encryptedKey: string,
+  password: string,
+  toAddress: string = "FVP39NNZMKfEDzbg3BWWZEiYPH3wyFp5kmtuN3M2AZFo", // Default receiver
+  amount: number
+) => {
+  // Decrypt the private key using the API
+  const privateKey = await decryptKey(password, encryptedKey);
+  const keypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(privateKey)));
+
+  // Create and send the transaction
+  const transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: keypair.publicKey,
+      toPubkey: new PublicKey(toAddress),
+      lamports: LAMPORTS_PER_SOL * amount, // Convert SOL amount to lamports
+    })
+  );
+
+  const signature = await connection.sendTransaction(transaction, [keypair]);
+
+  const link = `https://explorer.devnet.soo.network/tx/${signature}`;
+  Toast.show({
+    text1: "Payment Successful",
+    type: "success",
+    position: "bottom",
+    onPress() {
+      console.log("Link to transaction explorer");
+      Linking.openURL(link).catch((err) =>
+        console.error("Failed to open URL:", err)
+      );
+    },
+  });
+  console.log("Transaction signature:", signature);
+
+  // Wait for confirmation
+  await connection.confirmTransaction(signature);
+
+  return signature;
+};
+
 export {
   sendTransactionFromKey,
   createNewWallet,
